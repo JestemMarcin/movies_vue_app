@@ -188,12 +188,6 @@
                 </div>
 
                 <div
-                  v-if="submitted && !$v.validate_movie.ProductionYear.required"
-                  class="invalid-validate"
-                >
-                  Production Year is required
-                </div>
-                <div
                   v-if="
                     submitted && !$v.validate_movie.ProductionYear.yearRange
                   "
@@ -273,12 +267,7 @@
                   Minimum length of 3 required
                 </div>
 
-                <div
-                  v-if="submitted && !$v.validate_movie.ProductionYear.required"
-                  class="invalid-validate"
-                >
-                  Production Year is required
-                </div>
+
                 <div
                   v-if="
                     submitted && !$v.validate_movie.ProductionYear.yearRange
@@ -303,7 +292,7 @@ import Vue from "vue";
 import Vuelidate from "vuelidate";
 Vue.use(Vuelidate);
 
-var urlAPI = "http://localhost:8081/api/movie";
+var urlAPI = "http://localhost:8080/api/movie";
 
 export default {
   name: "MoviesItem",
@@ -315,7 +304,7 @@ export default {
       validate_movie: {
         Id: 0,
         Name: "",
-        ProductionYear: 0,
+        ProductionYear: "",
       },
       submitted: false,
     };
@@ -324,7 +313,7 @@ export default {
     validate_movie: {
       Id: { required },
       Name: { required, movieLength: minLength(3) },
-      ProductionYear: { required, yearRange: between(1900, 2100) },
+      ProductionYear: { yearRange: between(1900, 2100) },
     },
   },
 
@@ -422,6 +411,7 @@ export default {
         Name: movie.Name,
         ProductionYear: parseInt(movie.ProductionYear),
       };
+      if(isNaN(movie.ProductionYear))movie.ProductionYear=null;
       axios
         .put(urlAPI + "/" + this.target_movie.id, movie)
         .then((res) => {
